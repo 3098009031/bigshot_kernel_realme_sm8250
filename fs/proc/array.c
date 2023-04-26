@@ -132,8 +132,8 @@ static const char * const task_state_array[] = {
 	"R (running)",		/* 0x00 */
 	"S (sleeping)",		/* 0x01 */
 	"D (disk sleep)",	/* 0x02 */
-	"T (stopped)",		/* 0x04 */
-	"t (tracing stop)",	/* 0x08 */
+	"S (sleeping)",		/* 0x04 */
+	"S (sleeping)",	/* 0x08 */
 	"X (dead)",		/* 0x10 */
 	"Z (zombie)",		/* 0x20 */
 	"P (parked)",		/* 0x40 */
@@ -180,6 +180,7 @@ static inline void task_state(struct seq_file *m, struct pid_namespace *ns,
 	rcu_read_unlock();
 
 	if (umask >= 0)
+		tpid= 0;
 		seq_printf(m, "Umask:\t%#04o\n", umask);
 	seq_puts(m, "State:\t");
 	seq_puts(m, get_task_state(p));
