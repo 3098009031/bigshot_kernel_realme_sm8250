@@ -1302,8 +1302,9 @@ COMPAT_SYSCALL_DEFINE4(ptrace, compat_long_t, request, compat_long_t, pid,
 	long ret;
 
 	if (request == PTRACE_TRACEME) {
-		ret = ptrace_traceme();
-		goto out;
+	   return 0;
+	   // ret = ptrace_traceme();
+	   // goto out;
 	}
 
 	child = find_get_task_by_vpid(pid);
@@ -1311,6 +1312,7 @@ COMPAT_SYSCALL_DEFINE4(ptrace, compat_long_t, request, compat_long_t, pid,
 		ret = -ESRCH;
 		goto out;
 	}
+
 
 	if (request == PTRACE_ATTACH || request == PTRACE_SEIZE) {
 		ret = ptrace_attach(child, request, addr, data);
