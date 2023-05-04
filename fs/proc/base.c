@@ -394,24 +394,29 @@ static const struct file_operations proc_pid_cmdline_ops = {
  * Returns the resolved symbol.  If that fails, simply return the address.
  */
 static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
-			  struct pid *pid, struct task_struct *task)
+              struct pid *pid, struct task_struct *task)
 {
-	unsigned long wchan;
-	char symname[KSYM_NAME_LEN];
-
-	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
-		goto print0;
-
-	wchan = get_wchan(task);
-	if (wchan && !lookup_symbol_name(wchan, symname)) {
-		seq_puts(m, symname);
-		return 0;
-	}
-
-print0:
-	seq_putc(m, '0');
-	return 0;
-}
+    unsigned long wchan;
+    char symname[KSYM_NAME_LEN];
+ 
+    wchan = get_wchan(task);
+ 
+    if (wchan && ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)
+            && !lookup_symbol_name(wchan, symname))
+ 
+      //在此处增加代码如下：
+            {
+        if (strstr(symname, "trace")) { 
+         seq_printf(m, "%s", "sys_epoll_wait"); 
+       } 
+      //增加到到这里为止。
+ 
+        seq_printf(m, "%s", symname);
+    }
+    else
+        seq_putc(m, '0');
+ 
+    return 0;
 #endif /* CONFIG_KALLSYMS */
 
 static int lock_trace(struct task_struct *task)
